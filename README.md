@@ -5,4 +5,5 @@ Stowrzyłem go aby zacząć z programowaniem i rozwijać swoje umiejętności or
 
 Dodatkowe komendy:
 pip install -r requirements.txt 
+
 pip freeze > requirements.txt
