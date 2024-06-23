@@ -32,11 +32,11 @@ class MyApp(tk.Tk):
         menu = (pystray.MenuItem('Quit',  self.quit_window), 
                 pystray.MenuItem('Listen',self.listen_window),
                 pystray.MenuItem('Show',self.show_window),)
-        icon = pystray.Icon("name", image, "My App", menu)
-        icon.run()
+        self.icon = pystray.Icon("name", image, "My App", menu)
+        self.icon.run()
 
-    def quit_window(self, icon):
-        icon.stop()
+    def quit_window(self):
+        self.icon.stop()
         self.destroy()
     
     def listen_window(self, icon):
@@ -50,31 +50,31 @@ class MyApp(tk.Tk):
                 
                 print(MyText)
 
-                if MyText == ("open whatsapp"):
-                    open("whatsapp")
-                elif MyText == ("close whatsapp"):
-                    close("whatsapp")
-
-                elif MyText == ("open steam"):
-                    open("Steam")
-                elif MyText == ("close steam"):
-                    close("Steam")
-
-                elif MyText == ("open firefox"):
-                    open("Firefox")
-                elif MyText == ("close firefox"):
-                    close("Firefox")
-
-                elif MyText == ("open notebook"):
-                    open("Notatnik")
-                elif MyText == ("close notebook"):
-                    close("Notatnik")
-                     
-                elif MyText == ("open discord"):
-                    open("Discord")
-                elif MyText == ("close discord"):
-                    close("Discord") 
-
+                match MyText:
+                    case "open whatsapp":
+                        open("whatsapp")
+                    case "close whatsapp":
+                        close("whatsapp")
+                    case "open steam":
+                        open("Steam")
+                    case "close steam":                                 
+                        close("Steam")
+                    case "open firefox":
+                        open("Firefox")
+                    case "close firefox":
+                        close("Firefox")
+                    case "open notebook":
+                        open("Notatnik")
+                    case "close notebook":
+                        close("Notatnik")
+                    case "open discord":
+                        open("Discord")
+                    case "close discord":
+                        close("Discord") 
+                    case "quit":
+                        icon.stop()
+                        self.destroy()
+    
                     
         except sr.RequestError as e:
             print("Could not request results; {0}".format(e))
@@ -82,56 +82,53 @@ class MyApp(tk.Tk):
         except sr.UnknownValueError:
             print("unknown error occurred")
 
-    def hotkey_pressed():
-        try:
-            with sr.Microphone() as source2:
-                r.adjust_for_ambient_noise(source2, duration=0.2)
-                audio2 = r.listen(source2)
-                
-                MyText = r.recognize_google(audio2)
-                MyText = MyText.lower()
-                    
-                print(MyText)
-
-                if MyText == ("open whatsapp"):
-                    open("whatsapp")
-                elif MyText == ("close whatsapp"):
-                    close("whatsapp")
-
-                elif MyText == ("open steam"):
-                    open("Steam")
-                elif MyText == ("close steam"):
-                    close("Steam")
-
-                elif MyText == ("open firefox"):
-                    open("Firefox")
-                elif MyText == ("close firefox"):
-                    close("Firefox")
-
-                elif MyText == ("open notebook"):
-                    open("Notatnik")
-                elif MyText == ("close notebook"):
-                    close("Notatnik")         
-                        
-                elif MyText == ("open discord"):
-                    open("Discord")
-                elif MyText == ("close discord"):
-                    close("Discord") 
-
-                        
-        except sr.RequestError as e:
-            print("Could not request results; {0}".format(e))
-            
-        except sr.UnknownValueError:
-            print("unknown error occurred")
-
-    keyboard.add_hotkey('F8', hotkey_pressed) 
-            
-
-    def show_window(self, icon):
-        icon.stop()
+    def show_window(self):
+        self.icon.stop()
         self.after(0,self.deiconify)
+
+
+def hotkey_pressed(app):
+    try:
+        with sr.Microphone() as source2:
+            r.adjust_for_ambient_noise(source2, duration=0.2)
+            audio2 = r.listen(source2)
+            
+            MyText = r.recognize_google(audio2)
+            MyText = MyText.lower()
+                
+            print(MyText)
+
+            match MyText:
+                case "open whatsapp":
+                    open("whatsapp")
+                case "close whatsapp":
+                    close("whatsapp")
+                case "open steam":
+                    open("Steam")
+                case "close steam":                                 
+                    close("Steam")
+                case "open firefox":
+                    open("Firefox")
+                case "close firefox":
+                    close("Firefox")
+                case "open notebook":
+                    open("Notatnik")
+                case "close notebook":
+                    close("Notatnik")
+                case "open discord":
+                    open("Discord")
+                case "close discord":
+                    close("Discord")  
+                case "quit":
+                    app.quit_window()
+                    
+    except sr.RequestError as e:
+        print("Could not request results; {0}".format(e))
+        
+    except sr.UnknownValueError:
+        print("unknown error occurred")
 
 if __name__ == "__main__":
     app = MyApp()
+    keyboard.add_hotkey('F8', hotkey_pressed, args=(app,)) 
     app.mainloop()
